@@ -46,4 +46,4 @@ app.post('/api/gig/new', function(req, res){
 	});
 });
 
-app.listen(app.get('port'), '127.0.0.1');
+app.listen(app.get('port'));
