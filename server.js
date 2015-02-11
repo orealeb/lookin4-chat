@@ -34,8 +34,10 @@ var gigSchema = new Schema({
 	position: {type: String, required: true},
 	rate: {type: Number, required: true},
 	date: {type: Date, required: true},
-	name: {type: String, required: true}
+	name: {type: String, required: true},
+  description: {type: String, required: true}
 }, {versionKey:false});
+
 
 var Gig = mongoose.model('Gig', gigSchema);
 
@@ -46,18 +48,20 @@ app.post('/api/gig/all', function(req, res){
 });
 
 app.post('/api/gig/new', function(req, res){
+	console.log(req.body);
 	var newGig = new Gig({
 		userid: req.body.userID,
 		position: req.body.position,
 		rate: req.body.rate,
 		date: req.body.date,
-		name: req.body.name
+		name: req.body.name.
+    description: req.body.description
 	});
 	newGig.save(function(err, gig){
 		if (err) {
 			console.log(err);
 			res.status(400).send("Unknown Error");
-			return;	
+			return;
 		}
 		res.status(200).send("Success");
 	});
