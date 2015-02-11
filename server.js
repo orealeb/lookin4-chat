@@ -91,8 +91,9 @@ app.post('/api/users/update', function(req, res){
   var postCaption = req.body.caption;
   var postPhone = req.body.phone;
   var postID = req.body.userID;
-  User.update({userid: postID}, {caption: postCatpion, phone: postPhone}, {}, function(err, numUpdated){
+  User.update({userid: postID}, {caption: postCaption, phone: postPhone}, {}, function(err, numUpdated){
     if (err){
+			console.log(err);
       res.status(400).send("Fail");
       return;
     }
@@ -102,11 +103,11 @@ app.post('/api/users/update', function(req, res){
 
 app.post('/api/gigs/feed', function(req, res){
   var postID = req.body.userID;
-  console.log(postID);
   Gig.aggregate([
-      {$match: {userid: {$ne: postID}}},
+      {$match: {userid: {$ne: postID}, interested: {$nin: [postID]}}},
       {$project: {
         _id: 1,
+		userid: 1,
         name: 1,
         position: 1,
         rate: 1,
@@ -129,6 +130,7 @@ app.post('/api/gigs/personal', function(req, res){
       {$match: {userid: postID}},
       {$project: {
         _id: 1,
+				userid: 1,
         name: 1,
         position: 1,
         rate: 1,
@@ -167,6 +169,36 @@ app.post('/api/gigs/new', function(req, res){
     }
     res.status(200).send("Sucess");
   })
+});
+
+app.post('/api/gigs/interested', function(req, res){
+	var postID = req.body.userID;
+	var transactionID = req.body.transactionID;
+	Gig.update({_id: transactionID}, {$push: {interested: postID}}, function(err, transaction){
+		if (err || transaction == null){
+			console.log(err);
+			res.status(400).send("Unknown Error");
+			return;
+		}
+		res.status(200).send("Interest Recorded");
+	});
+});
+
+app.post('/api/gigs/getInterested', function(req, res){
+	var postTransactionID = req.body.transactionID;
+	Gig.findOne({_id: postTransactionID}, function(err, transaction){
+		if(err || transaction == null){
+			res.status(400).send("Unknown Error");
+			return;
+		}
+		User.find({userid: {$in: transaction.interested}}, function(err, users){
+			if (err || users == null){
+				res.status(400).send("Unknown Error");
+				return;	
+			}
+			res.status(200).send(users);
+		});
+	});
 });
 
 app.listen(app.get('port'));
