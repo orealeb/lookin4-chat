@@ -14,7 +14,7 @@
     <div class="list card" ng-repeat="gig in feed | filter: query | reverse">
       <div class="item header" ng-click="getDescription(gig.description)">
         <div>
-          <h2>Position: {{gig.position}}</h2>
+          <h2>Lookin4: {{gig.position}}</h2>
           <p>Rate: ${{gig.rate}}</p>
           <p>Date: {{gig.date|toDateString}}</p>
           <p>Requested by: {{gig.name}}</p>
