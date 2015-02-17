@@ -38,7 +38,8 @@ var gigSchema = new Schema({
 	rate: {type: Number, required: true},
 	date: {type: Date, required: true},
   description: {type: String, required: true},
-  interested: {type: Array, default: []}
+  interested: {type: Array, default: []},
+	notInterested: {type: Array, default: []}
 }, {versionKey:false});
 
 var userSchema = new Schema({
@@ -183,6 +184,19 @@ app.post('/api/gigs/interested', function(req, res){
 			return;
 		}
 		res.status(200).send("Interest Recorded");
+	});
+});
+
+app.post('/api/gigs/notInterested', function(req, res){
+	var postID = req.body.userID;
+	var transactionID = req.body.transactionID;
+	Gig.update({_id: transactionID}, {$push: {notInterested: postID}}, function(err, transaction){
+		if (err || transaction == null){
+			console.log(err);
+			res.status(400).send("Unknown Error");
+			return;
+		}
+		res.status(200).send("Not Interest Recorded");
 	});
 });
 
