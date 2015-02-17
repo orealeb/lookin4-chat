@@ -62,6 +62,12 @@ angular.module('lookin4.controllers', [])
     		, 2000);
 			})
   }
+  $scope.notInterested = function(tID){
+    GigAPI.notInterested($scope.user.id, tID)
+      .success(function(data, status, headers, config){
+        $scope.getFeed();
+      });
+  }
   $scope.getDescription = function(d){
     var alertPopup = $ionicPopup.alert({
        title: 'Description',

@@ -31,6 +31,13 @@ angular.module('lookin4.factory', [])
 				data: {userID: userid, transactionID: transactionid}
 			})
 		},
+    notInterested: function(userid, transactionid){
+      return $http({
+        url: base + "/notInterested",
+        method: "POST",
+        data: {userID: userid, transactionID: transactionid}
+      })
+    },
     getInterested: function(transactionid){
       return $http({
         url: base + "/getInterested",

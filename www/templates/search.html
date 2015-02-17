@@ -23,10 +23,16 @@
           <img ng-src="http://graph.facebook.com/{{gig.userid}}/picture?width=270&height=270" />
         </div>
       </div>
-      <a class="item item-icon-left" ng-click="interested(gig._id)">
-        <i class="icon ion-help"></i>
-        Interested
-      </a>
+      <div class="header">
+				<a class="item item-icon-left assertive" style="color: #EF4739; width: 50%; border: 0;" href="#" ng-click="notInterested(gig._id)">
+          <i class="icon ion-close assertive"></i>
+          Out
+        </a>
+        <a class="item item-icon-left" style="width: 50%; border: 0;" ng-click="interested(gig._id)">
+          <i class="icon ion-checkmark"></i>
+          In
+        </a>
+      </div>
     </div>
 	</ion-content>
 </ion-view>
