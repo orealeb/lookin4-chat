@@ -177,7 +177,7 @@ app.post('/api/gigs/new', function(req, res){
 });
 
 app.post('/api/gigs/update', function(req, res){
-  var postID = req.body.userID;
+  var postID = req.body._id;
   var postHidden = req.body.hidden;
   Gig.update({userid: postID}, {hidden: postHidden}, {}, function(err, numUpdated){
     if (err){
