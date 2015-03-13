@@ -10,6 +10,13 @@ angular.module('lookin4.factory', [])
         data: {userID: userID}
       })
     },
+    all: function(userID){
+      return $http({
+        url: base + "/allfeed",
+        method: "POST",
+        data: {userID: userID}
+      })
+    },
     personal: function(userID){
       return $http({
         url: base + "/personal",

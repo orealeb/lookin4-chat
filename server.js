@@ -105,6 +105,30 @@ app.post('/api/users/update', function(req, res){
   });
 });
 
+app.post('/api/gigs/allfeed', function(req, res){
+  var postID = req.body.userID;
+  Gig.aggregate([
+      {$match: {userid: {$ne: postID}, interested: {$nin: [postID]}, notInterested: {$nin: [postID]}}},
+      {$project: {
+        _id: 1,
+    userid: 1,
+        name: 1,
+        position: 1,
+        rate: 1,
+        date: 1,
+        description: 1,
+        hidden: 1
+      }}
+    ], function(err, gigs){
+      if (err) {
+        res.status(400).send("Unknown Error");
+        return;
+      }
+    console.log(gigs);
+      res.status(200).send(gigs);
+  })
+});
+
 app.post('/api/gigs/feed', function(req, res){
   var postID = req.body.userID;
   Gig.aggregate([
