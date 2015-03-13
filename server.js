@@ -108,7 +108,7 @@ app.post('/api/users/update', function(req, res){
 app.post('/api/gigs/feed', function(req, res){
   var postID = req.body.userID;
   Gig.aggregate([
-      {$match: {userid: {$ne: postID}, interested: {$nin: [postID]}, notInterested: {$nin: [postID]}}},
+      {$match: {userid: {$ne: postID}, interested: {$nin: [postID]}, notInterested: {$nin: [postID]}, hidden: {$eq: false}}},
       {$project: {
         _id: 1,
     userid: 1,
