@@ -34,12 +34,13 @@ mongoose.connect("mongodb://josneville:bananaman@ds041861.mongolab.com:41861/her
 var gigSchema = new Schema({
   userid: {type: String, required: true},
   name: {type: String, required: true},
-	position: {type: String, required: true},
-	rate: {type: Number, required: true},
-	date: {type: Date, required: true},
+  position: {type: String, required: true},
+  rate: {type: Number, required: true},
+  date: {type: Date, required: true},
   description: {type: String, required: true},
   interested: {type: Array, default: []},
-	notInterested: {type: Array, default: []}
+  notInterested: {type: Array, default: []},
+  hidden: {type: Boolean, default: false}
 }, {versionKey:false});
 
 var userSchema = new Schema({
@@ -96,7 +97,7 @@ app.post('/api/users/update', function(req, res){
   var postID = req.body.userID;
   User.update({userid: postID}, {caption: postCaption, phone: postPhone}, {}, function(err, numUpdated){
     if (err){
-			console.log(err);
+      console.log(err);
       res.status(400).send("Fail");
       return;
     }
@@ -110,19 +111,20 @@ app.post('/api/gigs/feed', function(req, res){
       {$match: {userid: {$ne: postID}, interested: {$nin: [postID]}, notInterested: {$nin: [postID]}}},
       {$project: {
         _id: 1,
-		userid: 1,
+    userid: 1,
         name: 1,
         position: 1,
         rate: 1,
         date: 1,
-        description: 1
+        description: 1,
+        hidden: 1
       }}
     ], function(err, gigs){
       if (err) {
         res.status(400).send("Unknown Error");
         return;
       }
-	  console.log(gigs);
+    console.log(gigs);
       res.status(200).send(gigs);
   })
 });
@@ -133,7 +135,7 @@ app.post('/api/gigs/personal', function(req, res){
       {$match: {userid: postID}},
       {$project: {
         _id: 1,
-				userid: 1,
+        userid: 1,
         name: 1,
         position: 1,
         rate: 1,
@@ -174,47 +176,60 @@ app.post('/api/gigs/new', function(req, res){
   })
 });
 
+app.post('/api/gigs/update', function(req, res){
+  var postID = req.body.userID;
+  var postHidden = req.body.hidden;
+  Gig.update({userid: postID}, {hidden: postHidden}, {}, function(err, numUpdated){
+    if (err){
+      console.log(err);
+      res.status(400).send("Fail");
+      return;
+    }
+    res.status(200).send("Success");
+  });
+});
+
 app.post('/api/gigs/interested', function(req, res){
-	var postID = req.body.userID;
-	var transactionID = req.body.transactionID;
-	Gig.update({_id: transactionID}, {$push: {interested: postID}}, function(err, transaction){
-		if (err || transaction == null){
-			console.log(err);
-			res.status(400).send("Unknown Error");
-			return;
-		}
-		res.status(200).send("Interest Recorded");
-	});
+  var postID = req.body.userID;
+  var transactionID = req.body.transactionID;
+  Gig.update({_id: transactionID}, {$push: {interested: postID}}, function(err, transaction){
+    if (err || transaction == null){
+      console.log(err);
+      res.status(400).send("Unknown Error");
+      return;
+    }
+    res.status(200).send("Interest Recorded");
+  });
 });
 
 app.post('/api/gigs/notInterested', function(req, res){
-	var postID = req.body.userID;
-	var transactionID = req.body.transactionID;
-	Gig.update({_id: transactionID}, {$push: {notInterested: postID}}, function(err, transaction){
-		if (err || transaction == null){
-			console.log(err);
-			res.status(400).send("Unknown Error");
-			return;
-		}
-		res.status(200).send("Not Interest Recorded");
-	});
+  var postID = req.body.userID;
+  var transactionID = req.body.transactionID;
+  Gig.update({_id: transactionID}, {$push: {notInterested: postID}}, function(err, transaction){
+    if (err || transaction == null){
+      console.log(err);
+      res.status(400).send("Unknown Error");
+      return;
+    }
+    res.status(200).send("Not Interest Recorded");
+  });
 });
 
 app.post('/api/gigs/getInterested', function(req, res){
-	var postTransactionID = req.body.transactionID;
-	Gig.findOne({_id: postTransactionID}, function(err, transaction){
-		if(err || transaction == null){
-			res.status(400).send("Unknown Error");
-			return;
-		}
-		User.find({userid: {$in: transaction.interested}}, function(err, users){
-			if (err || users == null){
-				res.status(400).send("Unknown Error");
-				return;	
-			}
-			res.status(200).send(users);
-		});
-	});
+  var postTransactionID = req.body.transactionID;
+  Gig.findOne({_id: postTransactionID}, function(err, transaction){
+    if(err || transaction == null){
+      res.status(400).send("Unknown Error");
+      return;
+    }
+    User.find({userid: {$in: transaction.interested}}, function(err, users){
+      if (err || users == null){
+        res.status(400).send("Unknown Error");
+        return; 
+      }
+      res.status(200).send(users);
+    });
+  });
 });
 
 app.listen(app.get('port'));
