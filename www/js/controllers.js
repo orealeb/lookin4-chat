@@ -69,12 +69,32 @@ angular.module('lookin4.controllers', [])
         $scope.getFeed();
       });
   }
-  $scope.getDescription = function(d){
-    var alertPopup = $ionicPopup.alert({
+  $scope.getDescription = function(description, tID, hidden, flagged){
+    
+
+      //$scope.data = {}
+
+    var confirmPopup  = $ionicPopup.confirm({
+       title: 'Description',
+       template: description,
+       okText: 'Report' // String (default: 'OK'). The text of the OK button.
+      });
+    confirmPopup.then(function(res) {
+     if(res) {
+      $scope.flagGig(tID, hidden, flagged);
+       //console.log('You are sure');
+
+     } else {
+       //console.log('You are not sure');
+     }
+    });
+        
+    /**var alertPopup = $ionicPopup.alert({
        title: 'Description',
        template: d
      });
-     alertPopup.then();
+     alertPopup.then();**/
+
   }
 
     $scope.flagGig = function(tID, hidden, flagged){

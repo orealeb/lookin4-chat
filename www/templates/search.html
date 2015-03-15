@@ -13,10 +13,10 @@
     </label>
     <div class="list card" ng-repeat="gig in feed | filter: query | reverse">
      
-      <a class="button button-icon icon ion-flag icon-left" style="color: #444; width: 2%;" ng-click="flagGig(gig._id, gig.hidden, gig.flagged)">
-      </a>    
+      <!--a class="button button-icon icon ion-flag icon-left" style="color: #444; width: 2%;" ng-click="flagGig(gig._id, gig.hidden, gig.flagged)">
+      </a-->    
 
-      <div class="item header" ng-click="getDescription(gig.description)">
+      <div class="item header" ng-click="getDescription(gig.description,gig._id, gig.hidden, gig.flagged)">
         <div>
           <h2>Lookin4: {{gig.position}}</h2>
           <p>Rate: ${{gig.rate}}</p>
