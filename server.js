@@ -40,6 +40,8 @@ var gigSchema = new Schema({
   description: {type: String, required: true},
   interested: {type: Array, default: []},
   notInterested: {type: Array, default: []},
+  flagged: {type: Number, default: 0},
+  flaggedReason: {type: Array, default: []},
   hidden: {type: Boolean, default: false}
 }, {versionKey:false});
 
@@ -111,12 +113,14 @@ app.post('/api/gigs/allfeed', function(req, res){
       {$match: {userid: {$ne: postID}, interested: {$nin: [postID]}, notInterested: {$nin: [postID]}}},
       {$project: {
         _id: 1,
-    userid: 1,
+        userid: 1,
         name: 1,
         position: 1,
         rate: 1,
         date: 1,
         description: 1,
+        flagged: 1,
+        flaggedReason: 1,
         hidden: 1
       }}
     ], function(err, gigs){
@@ -135,12 +139,14 @@ app.post('/api/gigs/feed', function(req, res){
       {$match: {userid: {$ne: postID}, interested: {$nin: [postID]}, notInterested: {$nin: [postID]}, hidden: {$eq: false}}},
       {$project: {
         _id: 1,
-    userid: 1,
+        userid: 1,
         name: 1,
         position: 1,
         rate: 1,
         date: 1,
-        description: 1,
+        description: 1,       
+        flagged: 1,
+        flaggedReason: 1,
         hidden: 1
       }}
     ], function(err, gigs){
@@ -203,7 +209,27 @@ app.post('/api/gigs/new', function(req, res){
 app.post('/api/gigs/update', function(req, res){
   var postID = req.body._id;
   var postHidden = req.body.hidden;
+
   Gig.update({_id: postID}, {hidden: postHidden}, {}, function(err, numUpdated){
+    if (err){
+      console.log(err);
+      res.status(400).send("Fail");
+      return;
+    }
+    res.status(200).send("Success");
+  });
+});
+
+app.post('/api/gigs/flagged', function(req, res){
+  var postID = req.body._id;
+  var userFlaggedReason = req.body.userFlaggedReason;
+  var flagged = req.body.flagged + 1;
+  var hidden = req.body.hidden;
+  console.log(userFlaggedReason);
+  if(flagged == 5)
+    hidden = true;
+
+  Gig.update({_id: postID}, {hidden: hidden}, {flagged: flagged}, {$push: {flaggedReason: userFlaggedReason}}, {}, function(err, numUpdated){
     if (err){
       console.log(err);
       res.status(400).send("Fail");
