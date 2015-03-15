@@ -21,7 +21,7 @@ angular.module('lookin4', ['ionic', 'lookin4.controllers', 'lookin4.factory', 'l
 })
 
 .config(function($stateProvider, $urlRouterProvider) {
-  openFB.init({appId: '684585124984098'});
+  openFB.init({appId: '373314962876628'});
   $stateProvider
   .state('login', {
     url: "/login",
