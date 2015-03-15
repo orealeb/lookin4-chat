@@ -209,7 +209,7 @@ app.post('/api/gigs/new', function(req, res){
 app.post('/api/gigs/update', function(req, res){
   var postID = req.body._id;
   var postHidden = req.body.hidden;
-
+console.log("update nn");
   Gig.update({_id: postID}, {hidden: postHidden}, {}, function(err, numUpdated){
     if (err){
       console.log(err);
@@ -222,10 +222,10 @@ app.post('/api/gigs/update', function(req, res){
 
 app.post('/api/gigs/flagged', function(req, res){
   var postID = req.body._id;
-  var userFlaggedReason = req.body.userFlaggedReason;
-  var flagged = req.body.flagged + 1;
+  var userFlaggedReason = 'dddd';
+  var flagged = 0;//parseInt(req.body.flagged) + 1;
   var hidden = req.body.hidden;
-  console.log(userFlaggedReason);
+  console.log(flagged + " " +userFlaggedReason);
   if(flagged == 5)
   {
     hidden = true;
